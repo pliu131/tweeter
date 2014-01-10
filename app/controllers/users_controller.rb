@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_action :signed_in_user, only: [:edit, :update]
-  before_action :correct_url, only: [:edit, :update]
+  before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: :destroy
 
   def index
@@ -13,6 +13,7 @@ class UsersController < ApplicationController
 
   def show
   	@user = User.find(params[:id])
+    @microposts = @user.microposts.paginate(page: params[:page])
   end
 
   def create
@@ -40,18 +41,16 @@ class UsersController < ApplicationController
     # this can be empty because the correct_user filter
     # sets @user for both actions
   end
+
+  def feed
+    Micropost.where("user_id = ?", id) # avoids SQL injection attack
+    @feed_items = current_user.feed.paginate(page: params[:page])
+  end
   
   private
   	def user_params
   		params.require(:user).permit(:name, :email, :password, :password_confirmation)
   	end
-
-    def signed_in_user
-      unless signed_in?
-        store_location
-        redirect_to signin_url, notice: "Please sign in."
-      end
-    end
 
     def correct_user
       @user = User.find(params[:id])
