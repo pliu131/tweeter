@@ -41,11 +41,6 @@ class UsersController < ApplicationController
     # this can be empty because the correct_user filter
     # sets @user for both actions
   end
-
-  def feed
-    Micropost.where("user_id = ?", id) # avoids SQL injection attack
-    @feed_items = current_user.feed.paginate(page: params[:page])
-  end
   
   private
   	def user_params

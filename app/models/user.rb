@@ -18,6 +18,10 @@ class User < ActiveRecord::Base
 		Digest::SHA1.hexdigest(token.to_s)
 	end
 
+	def feed
+    Micropost.where("user_id = ?", id) # avoids SQL injection attack
+  end
+
 	private
 
 		def create_remember_token

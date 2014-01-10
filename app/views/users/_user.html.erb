@@ -2,4 +2,8 @@
 	<%= gravatar_for user, size: 52 %>
 	<%= link_to user.name, user %>
 	<!-- include link to delete, fix admin problem. What the fuck. -->
+	<% if current_user.admin? && !current_user?(user) %>
+		| <%= link_to "delete", user_path(user), method: :delete,
+		                                         confirm: "You sure?" %>
+	<% end %>		                                          
 </li>
