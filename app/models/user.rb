@@ -41,6 +41,10 @@ class User < ActiveRecord::Base
   	relationships.find_by(followed_id: other_user.id).destroy!
   end
 
+  def send_welcome
+    Notifier.welcome(self).deliver
+  end
+  
 	private
 
 		def create_remember_token

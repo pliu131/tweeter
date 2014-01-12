@@ -46,8 +46,8 @@ describe "UserPages" do
 
   describe "profile page" do
   	let(:user) { FactoryGirl.create(:user) }
-  	let(:m1) { FactoryGirl.create(:micropost, user: user, content: "Foo") }
-    let(:m2) { FactoryGirl.create(:micropost, user: user, content: "Bar") }
+  	let!(:m1) { FactoryGirl.create(:micropost, user: user, content: "Foo") }
+    let!(:m2) { FactoryGirl.create(:micropost, user: user, content: "Bar") }
     
     before { visit user_path(user) }
 
@@ -136,6 +136,10 @@ describe "UserPages" do
         expect { click_button submit }.to change(User, :count).by(1)
       end
 
+      it "should send user a welcome email" do
+        expect { click_button submit }.to change(ActionMailer::Base.deliveries, :count).by(1)
+      end
+
       describe "after saving the user" do
         before { click_button submit }
         let(:user) { User.find_by(email: 'user@example.com') }
@@ -160,7 +164,7 @@ describe "UserPages" do
 
       it { should have_title(full_title('Following')) }
       it { should have_selector('h3', text: 'Following') }
-      it { should have_link(user.name, href: user_path(user)) }
+      it { should have_link(other_user.name, href: user_path(other_user)) }
     end
     
     describe "followers" do
